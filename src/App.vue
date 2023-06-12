@@ -1,10 +1,34 @@
 <template>
   <div id="app">
+    <section v-if="product" class="modal">
+      <div class="modal__container">
+        <div class="modal__container__img">
+          <img :src="product.img" :alt="product.name">
+        </div>
+        <div class="modal__container__info">
+          <span class="modal__container__info__price">{{ product.price }}</span>
+          <h2 class="modal__container__info__title">{{ product.name }}</h2>
+          <p class="modal__container__info__description">{{ product.description }}</p>
+          <button class="modal__container__info__btn">Adicionar Item</button>
+        </div>
+        <div class="modal__container__reviews">
+          <h2 class="modal__container__reviews__title">Avaliações</h2>
+          <ul class="modal__container__reviews__list">
+            <li class="modal__container__reviews__list__review" v-for="review in product.reviews">
+              <p class="modal__container__reviews__list__review__description">{{ review.description }}</p>
+              <p class="modal__container__reviews__list__review__name">{{ review.name }} | {{ review.star }} estrelas</p>
+
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section class="products">
-      <div v-for="product in products" :key="product.id" class="products__product">
+      <div @click="fetchProduct(product.id)" v-for="product in products" :key="product.id" class="products__product">
         <img :src="product.img" :alt="product.nome" class="products__product__img">
         <div class="products__product__info">
-          <span class="products__product__info__price">{{ product.price }}</span>
+          <span class="products__product__info__price">{{ product.price | priceFormatting }}</span>
           <h2 class="products__product__info__title">{{ product.name }}</h2>
         </div>
       </div>
@@ -13,13 +37,21 @@
 </template>
 
 <script>
+import { captureRejectionSymbol } from 'events';
+
 
 export default {
   name: 'App',
   data() {
     return {
-      products: []
+      products: [],
+      product: false,
     };
+  },
+  filters: {
+    priceFormatting(value) {
+      return value.toLocaleString("pt-BR", {style: "currency", currency: "BRL"});
+    }
   },
   methods: {
     fetchProducts() {
@@ -29,6 +61,13 @@ export default {
           this.products = response;
         });
     },
+    fetchProduct(id){
+      fetch(`./api/products/${id}/data.json`)
+      .then(response => response.json())
+      .then(response => {
+        this.product = response;
+      })
+    }
   },
   created() {
     this.fetchProducts();
@@ -50,10 +89,11 @@ body{
 }
 
 #app {
-  font-family: Noto serif;
+  font-family: "Noto Serif";
   padding: 0 80px;
   h1,
   h2, 
+  p,
   ul,
   li {
     padding: 0;
@@ -61,6 +101,79 @@ body{
   }
   ul {
     list-style: none;
+  }
+  .modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    &::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, .5);
+    }
+    .modal__container {
+      position: relative;
+      background: linear-gradient(to right, transparent 250px, #ffffff 250px);
+      z-index: 1;
+      display: grid;
+      align-items: end;
+      grid-gap: 50px;
+      padding: 50px 50px 50px 0;
+      .modal__container__img {
+        grid-column: 1;
+        box-shadow: 0 3px 4px rgba(0, 0, 0, .1), 0 4px 10px rgba(0, 0, 0, .2);
+        img {
+          max-width: 300px;
+          display: block;
+        }
+      }
+      .modal__container__info {
+        max-width: 600px;
+        grid-column: 2;
+        .modal__container__info__title {
+          font-size: 3rem;
+        }
+        .modal__container__info__btn {
+          margin-top: 80px;
+          background: #000000;
+          cursor: pointer;
+          color: #ffffff;
+          border: none;
+          font-size: 1rem;
+          padding: 10px 25px;
+          font-family: "Noto Serif";
+          &:active {
+            background: #808080;
+          }
+        }
+      }
+      .modal__container__reviews {
+        grid-column: 2;
+        .modal__container__reviews__title {
+          font-size: 1.75rem;
+        }
+        .modal__container__reviews__list__review {
+          border-bottom: 1px solid rgba(0, 0, 0, .1);
+          padding-bottom: 20px;
+          .modal__container__reviews__list__review__description {
+            color: rgba(0, 0, 0, .7);
+            margin: 20px 0 5px 0;
+          }
+          .modal__container__reviews__list__review__name {
+            font-weight: bold;
+          }
+        }
+      }
+    }
   }
   .products {
     max-width: 900px;
@@ -71,6 +184,7 @@ body{
       margin-bottom: 40px;
       background: #ffffff;
       box-shadow: 0 0 2rem rgba(0, 0, 0, .1);
+      cursor: pointer;
       .products__product__img {
         max-width: 300px;
         margin-right: 40px;

@@ -1,10 +1,10 @@
 {
-  "id": "tablet",
-  "name": "Tablet",
-  "price": 899,
+  "id": "speaker",
+  "name": "Speaker",
+  "price": 599,
   "description": "Todas estas questões, devidamente ponderadas, levantam dúvidas sobre se a necessidade de renovação processual causa impacto indireto na reavaliação do orçamento setorial.",
-  "stock": 2,
-  "img": "./api/produtos/tablet/tablet-picture.jpg",
+  "stock": 3,
+  "img": "./api/products/speaker/speaker-picture.jpg",
   "reviews": [
     {
       "name": "Rogério",
