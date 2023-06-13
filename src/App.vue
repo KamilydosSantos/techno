@@ -28,7 +28,7 @@
         </div>
         <div class="modal__container__info">
           <button @click="product = false" class="modal__container__info__close">X</button>
-          <span class="modal__container__info__price">{{ product.price }}</span>
+          <span class="modal__container__info__price">{{ product.price | priceFormatting}}</span>
           <h2 class="modal__container__info__title">{{ product.name }}</h2>
           <p class="modal__container__info__description">{{ product.description }}</p>
           <button v-if="product.stock > 0" class="modal__container__info__btn" @click="addItem">Adicionar Item</button>
@@ -40,12 +40,16 @@
             <li class="modal__container__reviews__list__review" v-for="review in product.reviews">
               <p class="modal__container__reviews__list__review__description">{{ review.description }}</p>
               <p class="modal__container__reviews__list__review__name">{{ review.name }} | {{ review.star }} estrelas</p>
-    
             </li>
           </ul>
         </div>
       </div>
     </section>
+    <div class="alert" :class="{active: activeAlert}">
+      <p class="alert__message">
+        {{ alertMessage }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -60,6 +64,8 @@ export default {
       products: [],
       product: false,
       shoppingCart: [],
+      alertMessage: "Item adicionado",
+      activeAlert: false,
     };
   },
   filters: {
@@ -109,6 +115,7 @@ export default {
       this.product.stock--;
       const {id, name, price} = this.product;
       this.shoppingCart.push({id, name, price});
+      this.alert(`${name} adicionado ao carrinho.`);
     },
     removeItem(index) {
       this.shoppingCart.splice(index, 1);
@@ -117,6 +124,13 @@ export default {
       if (window.localStorage.shoppingCart) {
         this.shoppingCart = JSON.parse(window.localStorage.shoppingCart);
       }
+    },
+    alert(message) {
+      this.alertMessage = message;
+      this.activeAlert = true;
+      setTimeout(() => {
+        this.activeAlert = false;
+      }, 1500);
     }
   },
   watch: {
@@ -133,6 +147,26 @@ export default {
 
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap');
+
+@keyframes fadeIn {
+  from {
+    transform: translate3d(50px, 0, 0);
+  }
+  to {
+    transform: translate3d(0px, 0, 0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    transform: translate3d(0, -30px, 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0px, 0);
+    opacity: 1;
+  }
+}
 
 * {
   box-sizing: border-box;
@@ -233,14 +267,6 @@ body{
       grid-gap: 50px;
       padding: 50px 50px 50px 0;
       animation: fadeIn .3s forwards;
-      @keyframes fadeIn {
-        from {
-          transform: translate3D(50px, 0, 0);
-        }
-        to {
-          transform: translate3D(0px, 0, 0);
-        }
-      }
       .modal__container__img {
         grid-column: 1;
         box-shadow: 0 3px 4px rgba(0, 0, 0, .1), 0 4px 10px rgba(0, 0, 0, .2);
@@ -302,6 +328,26 @@ body{
           }
         }
       }
+    }
+  }
+  .alert {
+    position: absolute;
+    top: 20px;
+    left: 0px;
+    z-index: 10;
+    width: 100%;
+    text-align: center;
+    display: none;
+    &.active {
+      display: block;
+      animation: fadeInDown .3s forwards;
+    }
+    .alert__message {
+      background: #ffffff;
+      display: inline-block;
+      padding: 20px 40px;
+      border: 2px solid #000000;
+      box-shadow: 0 3px 4px rgba(0, 0, 0, .1), 0 4px 10px rgba(0, 0, 0, .2);
     }
   }
 }
