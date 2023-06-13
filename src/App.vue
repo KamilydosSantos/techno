@@ -131,16 +131,28 @@ export default {
       setTimeout(() => {
         this.activeAlert = false;
       }, 1500);
+    },
+    router() {
+      const hash = document.location.hash;
+      if(hash) {
+        this.fetchProduct(hash.replace("#", ""));
+      }
     }
   },
   watch: {
     shoppingCart() {
       window.localStorage.shoppingCart = JSON.stringify(this.shoppingCart);
+    },
+    product() {
+      document.title = this.product.name || "Techno";
+      const hash = this.product.id || "";
+      history.pushState(null, null, `#${hash}`);
     }
   },
   created() {
     this.fetchProducts();
     this.checkLocalStorage();
+    this.router();
   },
 }
 </script>
