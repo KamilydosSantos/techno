@@ -112,10 +112,21 @@ export default {
     },
     removeItem(index) {
       this.shoppingCart.splice(index, 1);
+    },
+    checkLocalStorage() {
+      if (window.localStorage.shoppingCart) {
+        this.shoppingCart = JSON.parse(window.localStorage.shoppingCart);
+      }
+    }
+  },
+  watch: {
+    shoppingCart() {
+      window.localStorage.shoppingCart = JSON.stringify(this.shoppingCart);
     }
   },
   created() {
     this.fetchProducts();
+    this.checkLocalStorage();
   },
 }
 </script>
