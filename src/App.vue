@@ -202,6 +202,14 @@ export default {
   }
 }
 
+$breakpoint: 900px;
+
+@mixin responsive {
+  @media (max-width: $breakpoint) {
+    @content;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -213,6 +221,9 @@ body{
 }
 
 #app {
+  @include responsive {
+    padding: 0 10px;
+  }
   font-family: "Noto Serif";
   padding: 0 80px;
   h1,
@@ -242,7 +253,7 @@ body{
       &::after {
         content: "";
         display: inline-block;
-        background: url("./assets/carrinho.svg");
+        background: url("./assets/shopping.svg");
         width: 25px;
         height: 25px;
         margin-left: 10px;
@@ -250,9 +261,18 @@ body{
     }
   }
   .products {
+    @include responsive {
+      margin-top: 40px;
+    }
     max-width: 900px;
     margin: 100px auto 0 auto;
     .products__product {
+      @include responsive {
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 300px;
+        margin: 30px auto;
+      }
       display: flex;
       align-items: center;
       margin-bottom: 40px;
@@ -260,11 +280,20 @@ body{
       box-shadow: 0 0 2rem rgba(0, 0, 0, .1);
       cursor: pointer;
       .products__product__img {
+        @include responsive {
+          max-width: 100%;
+        }
         max-width: 300px;
         margin-right: 40px;
       }
       .products__product__info {
+        @include responsive {
+          padding: 20px;
+        }
         .products__product__info__title {
+          @include responsive {
+            font-size: 1.5rem;
+          }
           font-size: 3rem;
           line-height: 1;
         }
@@ -275,6 +304,9 @@ body{
     }
   }
   .modal {
+    @include responsive {
+      padding: 10px;
+    }
     position: absolute;
     top: 0;
     left: 0;
@@ -293,6 +325,11 @@ body{
       background: rgba(0, 0, 0, .5);
     }
     .modal__container {
+      @include responsive {
+        grid-gap: 20px;
+        background: #ffffff;
+        padding: 10px 0;
+      }
       position: relative;
       background: linear-gradient(to right, transparent 250px, #ffffff 250px);
       z-index: 1;
@@ -302,14 +339,25 @@ body{
       padding: 50px 50px 50px 0;
       animation: fadeIn .3s forwards;
       .modal__container__img {
+        @include responsive {
+          grid-row: 2;
+        }
         grid-column: 1;
         box-shadow: 0 3px 4px rgba(0, 0, 0, .1), 0 4px 10px rgba(0, 0, 0, .2);
-        img {
+        & img {
+          @include responsive {
+            width: 100%;
+            max-width: initial;
+          }
           max-width: 300px;
           display: block;
         }
       }
       .modal__container__info {
+        @include responsive {
+          grid-column: 1;
+          padding: 10px;
+        }
         max-width: 600px;
         grid-column: 2;
         .modal__container__info__close {
@@ -329,6 +377,9 @@ body{
           font-size: 3rem;
         }
         .modal__container__info__btn {
+          @include responsive {
+            margin-top: 20px;
+          }
           margin-top: 80px;
           background: #000000;
           cursor: pointer;
@@ -346,6 +397,10 @@ body{
         }
       }
       .modal__container__reviews {
+        @include responsive {
+          grid-column: 1;
+          padding: 10px;
+        }
         grid-column: 2;
         .modal__container__reviews__title {
           font-size: 1.75rem;
@@ -365,6 +420,9 @@ body{
     }
   }
   .shopping-modal {
+    @include responsive {
+      padding: 10px;
+    }
     position: absolute;
     display: flex;
     flex-direction: column;
