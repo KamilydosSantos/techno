@@ -66,9 +66,6 @@
 </template>
 
 <script>
-import { captureRejectionSymbol } from 'events';
-
-
 export default {
   name: 'App',
   data() {
@@ -143,6 +140,10 @@ export default {
         this.activeShoppingCart = false;
       }
     },
+    compareStock() {
+      const items = this.shoppingCart.filter(({id}) => id === this.product.id);
+      this.product.stock -= items.length;
+    },
     alert(message) {
       this.alertMessage = message;
       this.activeAlert = true;
@@ -165,6 +166,9 @@ export default {
       document.title = this.product.name || "Techno";
       const hash = this.product.id || "";
       history.pushState(null, null, `#${hash}`);
+      if(this.product) {
+        this.compareStock();
+      }
     }
   },
   created() {
