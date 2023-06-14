@@ -2,15 +2,9 @@
   <div id="app">
     <header class="header">
       <img src="./assets/techno.svg" alt="Techno" class="header__logo">
-      <div class="header__shopping-cart">
+      <div class="header__shopping-cart" @click="activeShoppingCart = true">
         {{ totalShopping | priceFormatting }} | {{ shoppingCart.length }}
       </div>
-      <ul>
-        <li v-for="(item, index) in shoppingCart">
-          <p>{{ item.name }}</p>
-          <button @click="removeItem(index)">X</button>
-        </li>
-      </ul>
     </header>
     <section class="products">
       <div @click="openModal(product.id)" v-for="product in products" :key="product.id" class="products__product">
@@ -45,6 +39,24 @@
         </div>
       </div>
     </section>
+    <section class="shopping-modal" :class="{active: activeShoppingCart}" @click="closeShoppingCart">
+      <div class="shopping-modal__container">
+        <button class="shopping-modal__container__btn" @click="activeShoppingCart = false">X</button>
+        <h2 class="shopping-modal__container__title">Carrinho</h2>
+        <div class="shopping-modal__container__content" v-if="shoppingCart.length > 0">
+          <ul class="shopping-modal__container__content__list">
+            <li class="shopping-modal__container__content__list__item" v-for="(item, index) in shoppingCart">
+              <p class="shopping-modal__container__content__list__item__name">{{ item.name }}</p>
+              <p class="shopping-modal__container__content__list__item__price">{{ item.price | priceFormatting}}</p>
+              <button class="shopping-modal__container__content__list__item__btn" @click="removeItem(index)">X</button>
+            </li>
+          </ul>
+          <p class="shopping-modal__container__content__total">{{ totalShopping | priceFormatting }}</p>
+          <button class="shopping-modal__container__content__btn">Finalizar Compra</button>
+        </div>
+        <p class="shopping-modal__container__message" v-else>O carrinho está vazio.</p>
+      </div>
+    </section>
     <div class="alert" :class="{active: activeAlert}">
       <p class="alert__message">
         {{ alertMessage }}
@@ -65,6 +77,7 @@ export default {
       product: false,
       shoppingCart: [],
       alertMessage: "Item adicionado",
+      activeShoppingCart: false,
       activeAlert: false,
     };
   },
@@ -123,6 +136,11 @@ export default {
     checkLocalStorage() {
       if (window.localStorage.shoppingCart) {
         this.shoppingCart = JSON.parse(window.localStorage.shoppingCart);
+      }
+    },
+    closeShoppingCart({target, currentTarget}) {
+      if (target === currentTarget) {
+        this.activeShoppingCart = false;
       }
     },
     alert(message) {
@@ -338,6 +356,90 @@ body{
           .modal__container__reviews__list__review__name {
             font-weight: bold;
           }
+        }
+      }
+    }
+  }
+  .shopping-modal {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    padding: 20px;
+    display: none;
+    &::before {
+      content: "";
+      position: fixed;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, .5);
+    }
+    &.active {
+      display: block;
+    }
+    .shopping-modal__container {
+      position: relative;
+      margin: 80px auto;
+      background: #ffffff;
+      padding: 40px;
+      max-width: 800px;
+      animation: fadeInDown .3s forwards;
+      .shopping-modal__container__btn {
+        border-radius: 50%;
+        border: 2px solid #000000;
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        font-size: 1rem;
+        background: #ffffff;
+        box-shadow: 0 3px 4px rgba(0, 0, 0, .1), 0 4px 10px rgba(0, 0, 0, .2);
+        cursor: pointer;
+      }
+      .shopping-modal__container__title {
+        margin-bottom: 10px;
+        border-bottom: 2px solid #000000;
+        padding-bottom: 20px;
+      }
+      .shopping-modal__container__content {
+        .shopping-modal__container__content__list {
+          .shopping-modal__container__content__list__item {
+            display: grid;
+            grid-template-columns: 1fr 1fr 50px;
+            border-bottom: 1px solid rgba(0, 0, 0, .1);
+            padding: 10px 0;
+            .shopping-modal__container__content__list__item__price {
+              text-align: right;
+            }
+            .shopping-modal__container__content__list__item__btn {
+              border: none;
+              font-size: 1rem;
+              cursor: pointer;
+              background: #ffffff;
+            }
+          }
+        }
+        .shopping-modal__container__content__total {
+          text-align: right;
+          padding: 10px 50px 10px 0;
+          margin-bottom: 20px;
+          border-bottom: 2px solid #000000;
+        }
+        .shopping-modal__container__content__btn {
+          display: block;
+          margin-left: auto;
+          background: #000000;
+          cursor: pointer;
+          color: #ffffff;
+          font-size: 1rem;
+          padding: 10px 25px; 
+          border: none;
+          font-family: "Noto Serif";
         }
       }
     }
