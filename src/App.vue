@@ -7,33 +7,33 @@
       </div>
     </header>
     <section class="products">
-      <div @click="openModal(product.id)" v-for="product in products" :key="product.id" class="products__product">
-        <img :src="product.img" :alt="product.nome" class="products__product__img">
-        <div class="products__product__info">
-          <span class="products__product__info__price">{{ product.price | priceFormatting }}</span>
-          <h2 class="products__product__info__title">{{ product.name }}</h2>
+      <div class="products__product" @click="openModal(product.id)" v-for="product in products" :key="product.id">
+        <img class="products__img" :src="product.img" :alt="product.nome">
+        <div class="products__info">
+          <span class="products__price">{{ product.price | priceFormatting }}</span>
+          <h2 class="products__title">{{ product.name }}</h2>
         </div>
       </div>
     </section>
-    <section @click="closeModal" v-if="product" class="modal">
+    <section class="modal" @click="closeModal" v-if="product">
       <div class="modal__container">
-        <div class="modal__container__img">
+        <div class="modal__img">
           <img :src="product.img" :alt="product.name">
         </div>
-        <div class="modal__container__info">
-          <button @click="product = false" class="modal__container__info__close">X</button>
-          <span class="modal__container__info__price">{{ product.price | priceFormatting}}</span>
-          <h2 class="modal__container__info__title">{{ product.name }}</h2>
-          <p class="modal__container__info__description">{{ product.description }}</p>
-          <button v-if="product.stock > 0" class="modal__container__info__btn" @click="addItem">Adicionar Item</button>
-          <button v-else class="modal__container__info__btn sold-off" disabled>Produto Esgotado</button>
+        <div class="modal__info">
+          <button class="btn-close" @click="product = false">X</button>
+          <span class="modal__price">{{ product.price | priceFormatting}}</span>
+          <h2 class="modal__title">{{ product.name }}</h2>
+          <p class="modal__description">{{ product.description }}</p>
+          <button class="btn" v-if="product.stock > 0" @click="addItem">Adicionar Item</button>
+          <button class="btn sold-off" v-else disabled>Produto Esgotado</button>
         </div>
-        <div class="modal__container__reviews">
-          <h2 class="modal__container__reviews__title">Avaliações</h2>
-          <ul class="modal__container__reviews__list">
-            <li class="modal__container__reviews__list__review" v-for="review in product.reviews">
-              <p class="modal__container__reviews__list__review__description">{{ review.description }}</p>
-              <p class="modal__container__reviews__list__review__name">{{ review.name }} | {{ review.star }} estrelas</p>
+        <div class="modal__reviews">
+          <h2 class="modal__reviews__title">Avaliações</h2>
+          <ul class="modal__reviews__list">
+            <li class="modal__reviews__review" v-for="review in product.reviews">
+              <p class="modal__reviews__description">{{ review.description }}</p>
+              <p class="modal__reviews__name">{{ review.name }} | {{ review.star }} estrelas</p>
             </li>
           </ul>
         </div>
@@ -41,20 +41,20 @@
     </section>
     <section class="shopping-modal" :class="{active: activeShoppingCart}" @click="closeShoppingCart">
       <div class="shopping-modal__container">
-        <button class="shopping-modal__container__btn" @click="activeShoppingCart = false">X</button>
-        <h2 class="shopping-modal__container__title">Carrinho</h2>
-        <div class="shopping-modal__container__content" v-if="shoppingCart.length > 0">
-          <ul class="shopping-modal__container__content__list">
-            <li class="shopping-modal__container__content__list__item" v-for="(item, index) in shoppingCart">
-              <p class="shopping-modal__container__content__list__item__name">{{ item.name }}</p>
-              <p class="shopping-modal__container__content__list__item__price">{{ item.price | priceFormatting}}</p>
-              <button class="shopping-modal__container__content__list__item__btn" @click="removeItem(index)">X</button>
+        <button class="btn-close" @click="activeShoppingCart = false">X</button>
+        <h2 class="shopping-modal__title">Carrinho</h2>
+        <div class="shopping-modal__content" v-if="shoppingCart.length > 0">
+          <ul class="shopping-modal__list">
+            <li class="shopping-modal__item" v-for="(item, index) in shoppingCart">
+              <p class="shopping-modal__name">{{ item.name }}</p>
+              <p class="shopping-modal__price">{{ item.price | priceFormatting}}</p>
+              <button class="shopping-modal__btn" @click="removeItem(index)">X</button>
             </li>
           </ul>
-          <p class="shopping-modal__container__content__total">{{ totalShopping | priceFormatting }}</p>
-          <button class="shopping-modal__container__content__btn">Finalizar Compra</button>
+          <p class="shopping-modal__total">{{ totalShopping | priceFormatting }}</p>
+          <button class="btn finalize">Finalizar Compra</button>
         </div>
-        <p class="shopping-modal__container__message" v-else>O carrinho está vazio.</p>
+        <p class="shopping-modal__message" v-else>O carrinho está vazio.</p>
       </div>
     </section>
     <div class="alert" :class="{active: activeAlert}">
@@ -237,6 +237,43 @@ body{
   ul {
     list-style: none;
   }
+  .btn {
+    margin-top: 80px;
+    background: #000000;
+    cursor: pointer;
+    color: #ffffff;
+    border: none;
+    font-size: 1rem;
+    padding: 10px 25px;
+    font-family: "Noto Serif";
+    &:active {
+      background: #808080;
+    }
+    &.sold-off {
+      background: #808080;
+    }
+    &.finalize {
+      @include responsive {
+        margin-top: 20px;
+      }
+      display: block;
+      margin-left: auto;
+      margin-top: 0;
+    }
+  }
+  .btn-close {
+    border-radius: 50%;
+    border: 2px solid #000000;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1rem;
+    background: #ffffff;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, .1), 0 4px 10px rgba(0, 0, 0, .2);
+    cursor: pointer;
+  }
   .header {
     display: flex;
     justify-content: space-between;
@@ -279,25 +316,25 @@ body{
       background: #ffffff;
       box-shadow: 0 0 2rem rgba(0, 0, 0, .1);
       cursor: pointer;
-      .products__product__img {
+      .products__img {
         @include responsive {
           max-width: 100%;
         }
         max-width: 300px;
         margin-right: 40px;
       }
-      .products__product__info {
+      .products__info {
         @include responsive {
           padding: 20px;
         }
-        .products__product__info__title {
+        .products__title {
           @include responsive {
             font-size: 1.5rem;
           }
           font-size: 3rem;
           line-height: 1;
         }
-        .products__product__info__price {
+        .products__price {
           color: rgba(0, 0, 0, .5);
         }
       }
@@ -338,7 +375,7 @@ body{
       grid-gap: 50px;
       padding: 50px 50px 50px 0;
       animation: fadeIn .3s forwards;
-      .modal__container__img {
+      .modal__img {
         @include responsive {
           grid-row: 2;
         }
@@ -353,66 +390,34 @@ body{
           display: block;
         }
       }
-      .modal__container__info {
+      .modal__info {
         @include responsive {
           grid-column: 1;
           padding: 10px;
         }
         max-width: 600px;
         grid-column: 2;
-        .modal__container__info__close {
-          border-radius: 50%;
-          border: 2px solid #000000;
-          width: 40px;
-          height: 40px;
-          position: absolute;
-          top: -10px;
-          right: -10px;
-          font-size: 1rem;
-          background: #ffffff;
-          box-shadow: 0 3px 4px rgba(0, 0, 0, .1), 0 4px 10px rgba(0, 0, 0, .2);
-          cursor: pointer;
-        }
-        .modal__container__info__title {
+        .modal__title {
           font-size: 3rem;
         }
-        .modal__container__info__btn {
-          @include responsive {
-            margin-top: 20px;
-          }
-          margin-top: 80px;
-          background: #000000;
-          cursor: pointer;
-          color: #ffffff;
-          border: none;
-          font-size: 1rem;
-          padding: 10px 25px;
-          font-family: "Noto Serif";
-          &:active {
-            background: #808080;
-          }
-          &.sold-off {
-            background: #808080;
-          }
-        }
       }
-      .modal__container__reviews {
+      .modal__reviews {
         @include responsive {
           grid-column: 1;
           padding: 10px;
         }
         grid-column: 2;
-        .modal__container__reviews__title {
+        .modal__reviews__title {
           font-size: 1.75rem;
         }
-        .modal__container__reviews__list__review {
+        .modal__reviews__review {
           border-bottom: 1px solid rgba(0, 0, 0, .1);
           padding-bottom: 20px;
-          .modal__container__reviews__list__review__description {
+          .modal__reviews__description {
             color: rgba(0, 0, 0, .7);
             margin: 20px 0 5px 0;
           }
-          .modal__container__reviews__list__review__name {
+          .modal__reviews__name {
             font-weight: bold;
           }
         }
@@ -450,59 +455,31 @@ body{
       padding: 40px;
       max-width: 800px;
       animation: fadeInDown .3s forwards;
-      .shopping-modal__container__btn {
-        border-radius: 50%;
-        border: 2px solid #000000;
-        width: 40px;
-        height: 40px;
-        position: absolute;
-        top: -10px;
-        right: -10px;
-        font-size: 1rem;
-        background: #ffffff;
-        box-shadow: 0 3px 4px rgba(0, 0, 0, .1), 0 4px 10px rgba(0, 0, 0, .2);
-        cursor: pointer;
-      }
-      .shopping-modal__container__title {
+      .shopping-modal__title {
         margin-bottom: 10px;
         border-bottom: 2px solid #000000;
         padding-bottom: 20px;
       }
-      .shopping-modal__container__content {
-        .shopping-modal__container__content__list {
-          .shopping-modal__container__content__list__item {
-            display: grid;
-            grid-template-columns: 1fr 1fr 50px;
-            border-bottom: 1px solid rgba(0, 0, 0, .1);
-            padding: 10px 0;
-            .shopping-modal__container__content__list__item__price {
-              text-align: right;
-            }
-            .shopping-modal__container__content__list__item__btn {
-              border: none;
-              font-size: 1rem;
-              cursor: pointer;
-              background: #ffffff;
-            }
-          }
-        }
-        .shopping-modal__container__content__total {
+      .shopping-modal__item {
+        display: grid;
+        grid-template-columns: 1fr 1fr 50px;
+        border-bottom: 1px solid rgba(0, 0, 0, .1);
+        padding: 10px 0;
+        .shopping-modal__price {
           text-align: right;
-          padding: 10px 50px 10px 0;
-          margin-bottom: 20px;
-          border-bottom: 2px solid #000000;
         }
-        .shopping-modal__container__content__btn {
-          display: block;
-          margin-left: auto;
-          background: #000000;
-          cursor: pointer;
-          color: #ffffff;
-          font-size: 1rem;
-          padding: 10px 25px; 
+        .shopping-modal__btn {
           border: none;
-          font-family: "Noto Serif";
+          font-size: 1rem;
+          cursor: pointer;
+          background: #ffffff;
         }
+      }
+      .shopping-modal__total {
+        text-align: right;
+        padding: 10px 50px 10px 0;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #000000;
       }
     }
   }
